@@ -2,11 +2,11 @@ function checkKey(e) {
 	switch (e.keyCode) {
 	case 115:
 	case 83:
-		moveBottom();
+		moveDown();
 		break;
 	case 119:
 	case 87:
-		moveTop();
+		moveUp();
 		break;
 	case 100:
 	case 68:
@@ -31,7 +31,7 @@ if ($.browser.mozilla) {
 var speed = 50;
 var distance = 50;
 
-function moveTop() {
+function moveUp() {
 	console.log("cima");
 
 	$('#pacman').animate({
@@ -44,7 +44,7 @@ function moveTop() {
 }
 
 // RIGHT
-function moveBottom() {
+function moveDown() {
 	console.log("baixo");
 	$('#pacman').animate({
 

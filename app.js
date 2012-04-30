@@ -1,49 +1,81 @@
+
 /**
- * App configuration.
+ * Module dependencies.
  */
 
-var sio = require('socket.io');
-var fs = require('fs');
-var app = require('express').createServer(function(request, response) {
-	fs.readFile('./index.html', function(error, content) {
-		if (error) {
-			response.writeHead(500);
-			response.end();
-		} else {
-			response.writeHead(200, {
-				'Content-Type' : 'text/html'
-			});
-			response.end(content, 'utf-8');
-		}
-	});
+var express = require('express')
+  , routes = require('./routes')
+,sio = require('socket.io');
+
+var app = module.exports = express.createServer();
+
+// Configuration
+
+app.configure(function(){
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'ejs');
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(express.cookieParser());
+  app.use(express.session({ secret: 'nyancat' }));
+  app.use(app.router);
+  app.use(express.static(__dirname + '/public'));
 });
 
-/**
- * App listen.
- */
+app.configure('development', function(){
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+});
 
-app.listen(3000,
-		function() {
-			var addr = app.address();
-			console.log('   app listening on http://' + addr.address + ':'
-					+ addr.port);
-		});
+app.configure('production', function(){
+  app.use(express.errorHandler());
+});
+
+// Routes
+
+app.get('/', routes.index);
+
+app.listen(3000, function(){
+console.log("server started at %s", (new Date()).toUTCString());
+  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+
+});
+
+
+
 
 /**
  * Socket.IO server (single process only)
  */
 
-var io = sio.listen(app), nicknames = {};
 
+
+
+var io = sio.listen(app), nicknames = {};
+/*
+
+// socket.io 
+var socket = io.listen(app); 
+socket.on('connection', function(client){ 
+    console.log("New client is here!");
+    client.send("hello world");
+    client.on('message', function(msg){ console.log("client has sent:"+msg); }) ;
+    client.on('disconnect', function(){ console.log("Client has disconnected"); }) ;
+    client.on('disconnect', function(){ }) 
+ }); 
+*/
 io.sockets.on('connection', function(socket) {
+
+	// user sends a message
 	socket.on('user message', function(msg) {
 		socket.broadcast.emit('user message', socket.nickname, msg);
 	});
 
+	// user movement
 	socket.on('user movement', function(msg) {
 		socket.broadcast.emit('user movement', socket.nickname, msg);
 	});
 
+	// set new nickname announcement
 	socket.on('nickname', function(nick, fn) {
 		if (nicknames[nick]) {
 			fn(true);
@@ -55,6 +87,7 @@ io.sockets.on('connection', function(socket) {
 		}
 	});
 
+	// user disconnects
 	socket.on('disconnect', function() {
 		if (!socket.nickname)
 			return;
@@ -65,3 +98,4 @@ io.sockets.on('connection', function(socket) {
 		socket.broadcast.emit('nicknames', nicknames);
 	});
 });
+

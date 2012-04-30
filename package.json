@@ -1,19 +1,14 @@
 {
-  "name": "PacNode",
-  "subdomain": "pacnode",
-  "description": "Pacman multiplayer using node.js + socket.io",
-  "scripts": {
-    "start": "app.js"
-  },
-  "version": "0.0.0",
-  "engines": {
-    "node": "0.6.x"
-  },
-  "dependencies": {
-    "nib": "0.2.x",
-    "express": "2.5.5",
-    "socket.io": "0.9.x",   
- 	"jade": "0.25.x",
-    "stylus": "0.19.x"
+    "name": "PacNode"
+  , "version": "0.0.1"
+, "description": "Pacman multiplayer using node.js + socket.io"
+  , "private": true
+  , "dependencies": {
+      "express": "2.5.8"
+    , "ejs": ">= 0.0.1"
+	, "socket.io": ">=0.0.1"
+	, "stylus": "0.19.x"
+	, "nib": "0.2.x"
+
   }
 }

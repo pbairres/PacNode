@@ -2,12 +2,23 @@
 <html>
   <head>
     <title><%= title %></title>
-<script src="http://code.jquery.com/jquery-latest.js"></script>
-<script src="socket.io/socket.io.js"></script>
-<script src="/javascripts/node_client_script.js"></script>
+	
+	<!-- jquery -->
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script src="http://api.jquery.com/scripts/events.js"></script>
+	
+	<!-- node related -->
+	<script src="socket.io/socket.io.js"></script>
+	
+	<!-- my script -->
+	<script src="/javascripts/node_client_script.js"></script>
+	
+	<!-- style -->
     <link rel='stylesheet' href='/stylesheets/style.css' />
+
   </head>
   <body>
+	<img src="/images/pacman.png" alt="pacman" id="pacman"	style="position: absolute; left: 10px;" />
     <%- body %>
   </body>
 </html>

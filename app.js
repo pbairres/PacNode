@@ -46,23 +46,9 @@ console.log("server started at %s", (new Date()).toUTCString());
 /**
  * Socket.IO server (single process only)
  */
-
-
-
-
 var io = sio.listen(app), nicknames = {};
-/*
 
-// socket.io 
-var socket = io.listen(app); 
-socket.on('connection', function(client){ 
-    console.log("New client is here!");
-    client.send("hello world");
-    client.on('message', function(msg){ console.log("client has sent:"+msg); }) ;
-    client.on('disconnect', function(){ console.log("Client has disconnected"); }) ;
-    client.on('disconnect', function(){ }) 
- }); 
-*/
+
 io.sockets.on('connection', function(socket) {
 
 	// user sends a message

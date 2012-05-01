@@ -7,6 +7,12 @@
   position: relative;
   border: 1px solid #ccc;
 }
+
+.centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+}
 #nickname,
 #connecting {
   position: absolute;

@@ -8,6 +8,7 @@ var socket = io.connect();
 // on connect
 socket.on('connect', function() {
 	$('#chat').addClass('connected');
+
 });
 
 // announcement
@@ -16,20 +17,9 @@ socket.on('announcement', function(msg) {
 });
 
 // user moves
-socket.on('user movement', function(nick, msg) {
+socket.on('user movement', function(nick, direction) {
 
-	if (msg == "up") {
-		moveUp();
-	}
-	if (msg == "down") {
-		moveDown();
-	}
-	if (msg == "left") {
-		moveLeft();
-	}
-	if (msg == "right") {
-		moveRight();
-	}
+	movePacman(null, direction);
 
 });
 
@@ -39,6 +29,8 @@ socket.on('nicknames', function(nicknames) {
 	for ( var i in nicknames) {
 		$('#nicknames').append($('<b>').text(nicknames[i]));
 	}
+	// you can now control your pacman
+	$(document).keydown(checkKey);
 });
 
 socket.on('user message', message);
@@ -71,6 +63,9 @@ function message(from, msg) {
 // dom manipulation
 $(function() {
 
+	// focus inputbox
+	$("#nick").focus();
+
 	// set nickname on cient
 	$('#set-nickname').submit(function(ev) {
 		socket.emit('nickname', $('#nick').val(), function(set) {
@@ -84,21 +79,13 @@ $(function() {
 	});
 
 	// send message client call
-	$('#send-message').submit(function() {
-		message('me', $('#message').val());
-		socket.emit('user message', $('#message').val());
-		clear();
-		$('#lines').get(0).scrollTop = 10000000;
-		return false;
-	});
-
-	// send movement
-//	$('#send-movement').click(function() {
-//
-//		socket.emit('user movement', "TOP");
-//
-//		return false;
-//	});
+	// $('#send-message').submit(function() {
+	// message('me', $('#message').val());
+	// socket.emit('user message', $('#message').val());
+	// clear();
+	// $('#lines').get(0).scrollTop = 10000000;
+	// return false;
+	// });
 
 	function clear() {
 		$('#message').val('').focus();
@@ -114,30 +101,28 @@ function checkKey(e) {
 	switch (e.keyCode) {
 	case 115:
 	case 83:
-		moveDown();
+		movePacman(null, "down");
 		socket.emit('user movement', "down");
 		break;
 	case 119:
 	case 87:
-		moveUp();
+		movePacman(null, "up");
 		socket.emit('user movement', "up");
 		break;
 	case 100:
 	case 68:
-		moveRight();
+		movePacman(null, "right");
 		socket.emit('user movement', "right");
 		break;
 	case 97:
 	case 65:
-		moveLeft();
+		movePacman(null, "left");
 		socket.emit('user movement', "left");
 		break;
 	default:
 		break;
 	}
 }
-
-$(document).keydown(checkKey);
 
 function findPosX(obj) {
 	var curleft = 0;
@@ -169,52 +154,52 @@ function findPosY(obj) {
 
 // movement variables
 var speed = 50;
-var distance = 50;
+var distance = 50 + "px";
 
-function moveUp() {
-	console.log("cima");
+function movePacman(imageId, direction) {
 
-	$('#pacman').animate({
+	if (imageId == null) {
+		imageId = '#pacman';
+	}
+	console.log(imageId + ": going -> " + direction + " | L:"
+			+ $(imageId).position().left+" T:"+$(imageId).position().top);
 
-		bottom : '+=' + distance + 'px'
+	switch (direction) {
 
-	}, speed, function() {
-		// Animation complete.
-	});
-}
+	case "up":
+		$(imageId).animate({
+			bottom : '+=' + distance
+		}, speed, function() {
+			// Animation complete.
+		});
 
-// RIGHT
-function moveDown() {
-	console.log("baixo");
-	$('#pacman').animate({
+		break;
 
-		bottom : '+=-' + distance + 'px'
+	case "down":
+		$(imageId).animate({
+			bottom : '+=-' + distance
+		}, speed, function() {
+			// Animation complete.
+		});
 
-	}, speed, function() {
-		// Animation complete.
-	});
-}
+		break;
 
-// RIGHT
-function moveRight() {
-	console.log("direita");
-	$('#pacman').animate({
+	case "left":
+		$(imageId).animate({
+			marginLeft : '-=' + distance
+		}, speed, function() {
+			// Animation complete.
+		});
 
-		marginLeft : '+=' + distance + 'px'
+		break;
 
-	}, speed, function() {
-		// Animation complete.
-	});
-}
+	case "right":
+		$(imageId).animate({
+			marginLeft : '+=' + distance
+		}, speed, function() {
+			// Animation complete.
+		});
 
-// LEFT
-function moveLeft() {
-	console.log("esquerda");
-	$('#pacman').animate({
-
-		marginLeft : '-=' + distance + 'px'
-
-	}, speed, function() {
-		// Animation complete.
-	});
+		break;
+	}
 }
